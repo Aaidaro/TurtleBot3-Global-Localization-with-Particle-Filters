@@ -6,6 +6,15 @@ A comparative robotics project implementing **three particle-filter-based locali
 
 The implementations are written in Python as ROS 2 nodes and include experiment launch files, RViz visualization topics, automated exploratory motion, CSV metric logging, and plotting utilities.
 
+## Authors & Contributors
+
+This project was jointly developed by:
+
+- **[AmirHesam Kamalpour](https://github.com/AmirHesamKamalpour)**
+- **[Aida roshani](https://github.com/Aaidaro)**
+
+Both authors collaboratively contributed to the design, implementation, and development of this project.
+
 ## Highlights
 
 - **Global localization:** initialize particles throughout the free space of a known occupancy map without assuming a known starting pose.
@@ -14,28 +23,6 @@ The implementations are written in Python as ROS 2 nodes and include experiment 
 - **Kidnapping experiments:** simulated robot relocation, mismatch detection, and global particle reinitialization.
 - **Evaluation:** position/yaw errors, convergence behavior, particle diversity, per-scan processing time, and MCMC acceptance rate.
 - **Visual diagnostics:** particle clouds, estimated/ground-truth trajectories, live ROS topics, and generated plots.
-
-## Localization Pipeline
-
-```mermaid
-flowchart TD
-    A[Known occupancy-grid map] --> B[Obstacle distance field]
-    C[Wheel odometry] --> D[Particle motion prediction]
-    E[2D LiDAR scans] --> F[Measurement likelihood]
-    B --> F
-    D --> F
-    F --> G[Normalize particle weights]
-    G --> H{Filter variant}
-    H --> I[Periodic systematic resampling]
-    H --> J[ESS-triggered resampling]
-    H --> K[ESS-triggered resampling + MCMC moves]
-    I --> L[Estimated pose and uncertainty]
-    J --> L
-    K --> L
-    L --> M[ROS topics, CSV logs, evaluation plots]
-```
-
-The filter represents the robot pose as particles $\mathbf{x}=[x, y, \theta]$. Each odometry update predicts new particle states; LiDAR measurements score those hypotheses against the occupancy-map distance field. Particle weights are normalized, the chosen resampling strategy is applied, and a weighted pose estimate is published.
 
 ### Compared Methods
 
@@ -236,13 +223,3 @@ See `lidar_analysis_py/launch/pf_experiment.launch.py` and the filter node imple
 - **Absolute paths:** Some launch configurations and log-directory settings assume the original `/root/tb3_projects_ws` workspace. Override or update them before reproducing experiments on another machine.
 - **Package metadata:** `package.xml` and `setup.py` still contain placeholder description/maintainer/license metadata. `setup.py` also lists some legacy console entry points whose Python modules are absent from this archive; clean these entries up before distributing the package.
 - **Validation scope:** Python source files were inspected for syntax, but the full ROS 2/Gazebo workflow and published numerical results have not been rerun in an independent environment.
-
-## Further Reading
-
-- [Full project report](report.pdf)
-- [ROS 2 documentation](https://docs.ros.org/)
-- [TurtleBot3 official e-Manual](https://emanual.robotis.com/docs/en/platform/turtlebot3/overview/)
-
-## License
-
-No software license is included in the provided project archive. Add a `LICENSE` file and update ROS package metadata with the intended license before publishing the project for reuse.
