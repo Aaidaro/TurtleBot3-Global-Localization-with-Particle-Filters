@@ -6,6 +6,12 @@ A comparative robotics project implementing **three particle-filter-based locali
 
 The implementations are written in Python as ROS 2 nodes and include experiment launch files, RViz visualization topics, automated exploratory motion, CSV metric logging, and plotting utilities.
 
+<p align="center">
+  <img src="images/gazebo-and-occupancy-map.png" alt="Gazebo house simulation with a 2D LiDAR scan beside the corresponding occupancy-grid map" width="900">
+</p>
+
+<p align="center"><em>Gazebo environment and corresponding occupancy-grid map used for LiDAR-based localization.</em></p>
+
 ## Authors & Contributors
 
 This project was jointly developed by:
@@ -23,6 +29,12 @@ Both authors collaboratively contributed to the design, implementation, and deve
 - **Kidnapping experiments:** simulated robot relocation, mismatch detection, and global particle reinitialization.
 - **Evaluation:** position/yaw errors, convergence behavior, particle diversity, per-scan processing time, and MCMC acceptance rate.
 - **Visual diagnostics:** particle clouds, estimated/ground-truth trajectories, live ROS topics, and generated plots.
+
+<p align="center">
+  <img src="images/rviz-particle-cloud.png" alt="RViz view showing multiple pose hypotheses, particle clusters, and estimated robot trajectories on an occupancy map" width="600">
+</p>
+
+<p align="center"><em>RViz visualization of pose hypotheses and filter state during global localization.</em></p>
 
 ### Compared Methods
 
@@ -47,7 +59,9 @@ The accompanying report compares the three methods in a simulated TurtleBot3 hou
 
 **Key finding:** the adaptive variant achieved the lowest overall position RMSE and lowest processing cost, whereas MCMC achieved the shortest reported convergence time and smallest final position error. A lower final error does **not** imply a lower RMSE over the entire run.
 
-See the [full project report](report.pdf) for experiment details, methodology, and additional analysis.
+![Position and yaw error histories shown for the basic, adaptive, and MCMC particle-filter experiments](images/filter-position-yaw-errors.png)
+
+*Example position and orientation error traces from the supplied experiments. The figure's label “Adaptive Importance Sampling” refers to the ESS-based adaptive-resampling implementation discussed above; it is not a separate importance-sampling proposal. Plots depict example runs rather than the across-run summary in the table.*
 
 ## Repository Structure
 
@@ -171,6 +185,12 @@ ros2 launch lidar_analysis_py kidnap.launch.py
 
 The relocation tool deletes and respawns the TurtleBot3 at a randomized collision-free pose. The filter can detect inconsistencies using odometry jumps and scan-match deterioration, then reinitialize its particle cloud across the map.
 
+<p align="center">
+  <img src="images/kidnapped-robot-recovery.png" alt="RViz sequence showing particle reinitialization after simulated kidnapping, global relocalization, and a recovered concentrated pose estimate" width="690">
+</p>
+
+<p align="center"><em>Kidnapped-robot experiment: global particle redistribution, relocalization, and recovery.</em></p>
+
 **Important:** `kidnap.launch.py` currently hardcodes the map path, model name, and truth offsets inside its `Node` parameters, even though it declares corresponding launch arguments. Update these constants for your workspace before running it.
 
 ### Metrics and Plots
@@ -193,6 +213,10 @@ ros2 run lidar_analysis_py pf_error_plotter -- \
 ```
 
 The plotter produces position/yaw error, effective sample size, particle spread, convergence progress, processing time, and estimated-versus-ground-truth trajectory plots. The `pf_plot.launch.py` shortcut is also available, but its log/output paths currently assume `/root/tb3_projects_ws`.
+
+![Example filter diagnostics showing convergence progress, effective sample size, particle spread, and estimated versus true trajectory](images/particle-filter-diagnostics.png)
+
+*Example diagnostic plots: convergence progress, effective sample size, particle spread, and estimated versus ground-truth trajectory.*
 
 ## ROS Interfaces and Parameters
 
